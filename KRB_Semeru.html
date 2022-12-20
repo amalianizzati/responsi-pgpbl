@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kawasan Rawan Bencana Semeru</title>
+    <link
+			rel="stylesheet"
+			href="https://unpkg.com/leaflet@1.9.1/dist/leaflet.css"
+		/>
+        <link rel="stylesheet" href="dist/leaflet.awesome-markers.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha512-q3eWabyZPc1XTCmF+8/LuE1ozpg5xxn7iO89yfSOd5/oKvyqLngoNGsx8jq92Y8eXJ/IRxQbEC+FGSYxtk2oiw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+		<style>
+			html,
+			body,
+			#map {
+				height: 100%;
+				width: 100%;
+				margin: 0px;
+			}
+		</style>
+</head>
+<body>
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+		<script src="https://unpkg.com/leaflet@1.9.1/dist/leaflet.js"></script>
+		<script src="dist/leaflet.awesome-markers.js"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" integrity="sha512-P9vJUXK+LyvAzj8otTOKzdfF1F3UYVl13+F8Fof8/2QNb8Twd6Vb+VD52I7+87tex9UXxnzPgWA3rH96RExA7A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+		<div id="map"></div>
+        <script>
+			/* Initial Map */
+			var map = L.map("map").setView([-8.106675938003555, 112.92253621766686], 12);
+
+			/* Tile Basemap */
+			var basemap = L.tileLayer(
+				"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+				{
+					attribution:
+						'<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | <a href="https://www.unsorry.net" target="_blank">unsorry@2022</a>',
+				}
+			);
+			basemap.addTo(map);
+
+            
+			/*memanggil data file polygon */
+        $.getJSON("data/responsi/KRB_Semeru.geojson", function (data) { 
+        KRB.addData(data);
+        map.addLayer(KRB);
+        map.fitBounds(KRB.getBounds());
+      });
+            
+        /*GeoJSON Polygon Style */
+        var KRB = L.geoJson(null, { 
+        style: function (feature) {
+          if (feature.properties.REMARK === "sering terlanda aliran awan panas, aliran lava, lontaran atau guguran batu pijar" ) { 
+            return {
+              opacity: 0, 
+              //color: 'RED', 
+              weight: 0,
+              fillOpacity: 0.7, 
+              fillColor: '#820000'
+            }
+          }
+          if (feature.properties.REMARK === "berpotensi terlanda aliran lahar dan kemungkinan dapat terlanda perluasan awan panas dan aliran lava" ) { 
+            return {
+              opacity: 0, 
+              //color: 'black', 
+              weight: 0,
+              fillOpacity: 0.7, 
+              fillColor: '#FFD372'
+            }
+          }
+          if (feature.properties.REMARK === "berpotensi terlanda aliran awan panas, aliran lava, guguran batu pijar, dan aliran lahar" ) { 
+            return {
+              opacity: 0, 
+              //color: 'black', 
+              weight: 0,
+              fillOpacity: 0.7, 
+              fillColor: '#F65A83'
+            }
+          }
+          if (feature.properties.REMARK === "berpotensi tertimpa lontaran batu pijar dan hujan abu lebat" ) { 
+            return {
+              opacity: 0, 
+              //color: 'black', 
+              weight: 0,
+              fillOpacity: 0.7, 
+              fillColor: '#583D72'
+            }
+          }
+          if (feature.properties.REMARK === "berpotensi terlanda hujan abu dan kemungkinan lontaran batu pijar" ) { 
+            return {
+              opacity: 0, 
+              //color: 'black', 
+              weight: 0,
+              fillOpacity: 0.7, 
+              fillColor: '#FF5200'
+            }
+          }
+        },
+        onEachFeature: function (feature, layer) {
+            var content = "Potensi Bencana: " + feature.properties.REMARK + "<br>" ;
+            layer.on({
+            click: function (e) { //Fungsi ketika obyek diklik
+              KRB.bindPopup(content);
+            },
+            mouseover: function (e) {
+                KRB.bindTooltip(feature.properties.KRB_Semeru);
+				},
+            }
+        )}
+        },
+        $.getJSON("data/Responsi/AdminDesaLumajang.geojson", function (data) {
+				Admin.addData(data);
+				map.addLayer(Admin);
+			}),
+        )
+	</script>
+
+</body>
+</html>
+
